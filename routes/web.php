@@ -1,13 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
 
-// トップ（書籍一覧）… Chapter 6で本実装。今は仮。
-Route::get('/', function () {
-    return '書籍一覧（準備中）';
-})->name('books.index');
+// トップ = 書籍一覧
+Route::get('/', [BookController::class, 'index'])->name('books.index');
 
-// 認証が必要なページの動作確認用（Chapter 6で本実装に置き換え）
+// 認証が必要なページの動作確認用
 Route::middleware('auth')->group(function () {
     Route::get('/mypage', fn() => 'ログイン成功！認証ページです')->name('mypage');
+});
+
+// 書籍CRUD（indexは上で定義済みなので除外）
+Route::resource('books', BookController::class)->except(['index']);
+
+// 仮ルート（後で各機能を本実装したら置き換える）
+Route::middleware('auth')->group(function () {
+    Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
+    Route::get('/favorites', fn() => 'お気に入り（準備中）')->name('favorites.index');
+    Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
 });
