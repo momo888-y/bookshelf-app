@@ -24,7 +24,7 @@ class Book extends Model
     // このBookに付いたレビュー（1対多の親 → hasMany）
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class)->latest();
     }
 
     // このBookをお気に入りにしたユーザー（多対多 → belongsToMany）
