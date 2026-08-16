@@ -22,9 +22,9 @@ Route::middleware('auth')->group(function () {
 
     // 以下、後で本実装する仮ルート
     Route::post('/favorites/{book}/toggle', fn() => back())->name('favorites.toggle');
-    Route::post('/books/{book}/reviews', fn() => back())->name('reviews.store');
-    Route::post('/reviews/{review}/like', fn() => back())->name('reviews.like');
-    Route::get('/reviews/{review}/edit', fn() => 'レビュー編集（準備中）')->name('reviews.edit');
-    Route::put('/reviews/{review}', fn() => back())->name('reviews.update');
-    Route::delete('/reviews/{review}', fn() => back())->name('reviews.destroy');
+    Route::post('/books/{book}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/reviews/{review}/like', [\App\Http\Controllers\ReviewController::class, 'like'])->name('reviews.like');
+    Route::get('/reviews/{review}/edit', [\App\Http\Controllers\ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });

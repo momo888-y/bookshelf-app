@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
+    protected $fillable = ['user_id', 'book_id', 'rating', 'comment'];
+
     use HasFactory;
 
     // このレビューの投稿者（belongsTo）
