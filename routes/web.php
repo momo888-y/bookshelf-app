@@ -18,7 +18,7 @@ Route::resource('books', BookController::class)->except(['index']);
 Route::middleware('auth')->group(function () {
     Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
     Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites.index');
-    Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
+    Route::resource('genres', \App\Http\Controllers\GenreController::class);
 
     // 以下、後で本実装する仮ルート
     Route::post('/favorites/{book}/toggle', [\App\Http\Controllers\FavoriteController::class, 'toggle'])->name('favorites.toggle');
