@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreBookRequest;
 use App\Models\Book;
+use App\Http\Requests\UpdateBookRequest;
 
 class BookController extends Controller
 {
@@ -66,15 +67,25 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        $genres = \App\Models\Genre::all();
+
+        return view('books.edit', compact('book', 'genres'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book)
     {
-        //
+        // バリデーション済みデータで更新
+        $book->update($request->validated());
+
+        // ジャンルを紐付け直し（syncで置き換え）
+        $book->genres()->sync($request->genres);
+
+        // 書籍詳細画面へ
+        return redirect()->route('books.show', $book)
+            ->with('success', '書籍情報を更新しました。');
     }
 
     /**
@@ -82,6 +93,9 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+
+        return redirect()->route('books.index')
+            ->with('success', '書籍を削除しました。');
     }
 }
