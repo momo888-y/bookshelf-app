@@ -19,4 +19,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
     Route::get('/favorites', fn() => 'お気に入り（準備中）')->name('favorites.index');
     Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
+
+    // 以下、後で本実装する仮ルート
+    Route::post('/favorites/{book}/toggle', fn() => back())->name('favorites.toggle');
+    Route::post('/books/{book}/reviews', fn() => back())->name('reviews.store');
+    Route::post('/reviews/{review}/like', fn() => back())->name('reviews.like');
+    Route::get('/reviews/{review}/edit', fn() => 'レビュー編集（準備中）')->name('reviews.edit');
+    Route::put('/reviews/{review}', fn() => back())->name('reviews.update');
+    Route::delete('/reviews/{review}', fn() => back())->name('reviews.destroy');
 });

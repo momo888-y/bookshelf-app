@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreBookRequest;
 use App\Models\Book;
 
 class BookController extends Controller
@@ -23,15 +24,31 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        $genres = \App\Models\Genre::all();
+
+        return view('books.create', compact('genres'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        //
+        // バリデーション済みのデータを取得
+        $validated = $request->validated();
+
+        // 登録者は現在ログイン中のユーザー
+        $validated['user_id'] = auth()->id();
+
+        // 書籍を作成
+        $book = \App\Models\Book::create($validated);
+
+        // ジャンルを紐付け（多対多）
+        $book->genres()->sync($request->genres);
+
+        // 登録した書籍の詳細画面へ
+        return redirect()->route('books.show', $book)
+            ->with('success', '書籍を登録しました。');
     }
 
     /**
