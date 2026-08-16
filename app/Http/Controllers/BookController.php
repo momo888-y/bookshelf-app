@@ -15,6 +15,7 @@ class BookController extends Controller
     public function index()
     {
         $books = \App\Models\Book::with('genres')
+            ->withAvg('reviews', 'rating')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
