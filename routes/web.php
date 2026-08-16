@@ -2,9 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\RankingController;
 
 // トップ = 書籍一覧
 Route::get('/', [BookController::class, 'index'])->name('books.index');
+
+// ランキング（公開ページ・ゲスト可）
+Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
 
 // 認証が必要なページの動作確認用
 Route::middleware('auth')->group(function () {
@@ -16,7 +20,6 @@ Route::resource('books', BookController::class)->except(['index']);
 
 // 仮ルート（後で各機能を本実装したら置き換える）
 Route::middleware('auth')->group(function () {
-    Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
     Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites.index');
     Route::resource('genres', \App\Http\Controllers\GenreController::class);
 
