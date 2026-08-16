@@ -17,11 +17,11 @@ Route::resource('books', BookController::class)->except(['index']);
 // 仮ルート（後で各機能を本実装したら置き換える）
 Route::middleware('auth')->group(function () {
     Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
-    Route::get('/favorites', fn() => 'お気に入り（準備中）')->name('favorites.index');
+    Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites.index');
     Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
 
     // 以下、後で本実装する仮ルート
-    Route::post('/favorites/{book}/toggle', fn() => back())->name('favorites.toggle');
+    Route::post('/favorites/{book}/toggle', [\App\Http\Controllers\FavoriteController::class, 'toggle'])->name('favorites.toggle');
     Route::post('/books/{book}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{review}/like', [\App\Http\Controllers\ReviewController::class, 'like'])->name('reviews.like');
     Route::get('/reviews/{review}/edit', [\App\Http\Controllers\ReviewController::class, 'edit'])->name('reviews.edit');
