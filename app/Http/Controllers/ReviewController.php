@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
+use App\Models\Book;
 use App\Models\Review;
 
 class ReviewController extends Controller
@@ -21,6 +21,7 @@ class ReviewController extends Controller
         return redirect()->route('books.show', $book)
             ->with('success', 'レビューを投稿しました。');
     }
+
     // レビュー編集画面
     public function edit(Review $review)
     {

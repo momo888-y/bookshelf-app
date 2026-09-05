@@ -3,8 +3,9 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreBookRequest extends FormRequest
+class UpdateBookRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,10 +15,9 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'string', 'size:13', 'unique:books,isbn'],
+            'isbn' => ['required', 'string', 'size:13', Rule::unique('books', 'isbn')->ignore($this->route('book'))],
             'published_date' => ['required', 'date'],
             'description' => ['nullable', 'string'],
             'image_url' => ['nullable', 'url', 'max:255'],
@@ -29,9 +29,6 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => '登録者IDは必須です。',
-            'user_id.integer' => '登録者IDは整数で指定してください。',
-            'user_id.exists' => '指定された登録者は存在しません。',
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
             'author.required' => '著者名は必須です。',

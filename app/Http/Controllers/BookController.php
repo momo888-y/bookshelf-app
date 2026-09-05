@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreBookRequest;
-use App\Models\Book;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Book;
+use App\Models\Genre;
 
 class BookController extends Controller
 {
@@ -14,19 +14,20 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = \App\Models\Book::with('genres')
+        $books = Book::with('genres')
             ->withAvg('reviews', 'rating')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('books.index', compact('books'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $genres = \App\Models\Genre::all();
+        $genres = Genre::all();
 
         return view('books.create', compact('genres'));
     }
@@ -43,7 +44,7 @@ class BookController extends Controller
         $validated['user_id'] = auth()->id();
 
         // 書籍を作成
-        $book = \App\Models\Book::create($validated);
+        $book = Book::create($validated);
 
         // ジャンルを紐付け（多対多）
         $book->genres()->sync($request->genres);
@@ -68,7 +69,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        $genres = \App\Models\Genre::all();
+        $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
     }
