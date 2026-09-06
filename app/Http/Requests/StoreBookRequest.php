@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +14,6 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required', 'string', 'size:13', 'unique:books,isbn'],
@@ -29,9 +28,6 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => '登録者IDは必須です。',
-            'user_id.integer' => '登録者IDは整数で指定してください。',
-            'user_id.exists' => '指定された登録者は存在しません。',
             'title.required' => 'タイトルは必須です。',
             'title.max' => 'タイトルは255文字以内で入力してください。',
             'author.required' => '著者名は必須です。',
@@ -45,7 +41,7 @@ class StoreBookRequest extends FormRequest
             'image_url.max' => '画像URLは255文字以内で入力してください。',
             'genres.required' => 'ジャンルは1つ以上選択してください。',
             'genres.min' => 'ジャンルは1つ以上選択してください。',
-            'genres.*.exists' => '選択されたジャンルは存在しません。',
+            'genres.*.exists' => '選択されたジャンルは選択できません。',
         ];
     }
 }
