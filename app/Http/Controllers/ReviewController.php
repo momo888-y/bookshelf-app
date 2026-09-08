@@ -31,6 +31,8 @@ class ReviewController extends Controller
     // レビュー更新
     public function update(UpdateReviewRequest $request, Review $review)
     {
+        $this->authorize('update', $review);
+
         $review->update([
             'rating' => $request->rating,
             'comment' => $request->comment,
@@ -43,6 +45,8 @@ class ReviewController extends Controller
     // レビュー削除
     public function destroy(Review $review)
     {
+        $this->authorize('delete', $review);
+
         $book = $review->book;
         $review->delete();
 
