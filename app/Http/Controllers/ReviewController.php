@@ -57,11 +57,6 @@ class ReviewController extends Controller
     // いいねトグル
     public function like(Review $review)
     {
-        // 自分のレビューにはいいねできない
-        if ($review->user_id === auth()->id()) {
-            return back();
-        }
-
         auth()->user()->likedReviews()->toggle($review->id);
 
         return back();
