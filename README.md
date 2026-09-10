@@ -1,66 +1,186 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BookShelf 書籍レビューアプリ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 概要
 
-## About Laravel
+BookShelf は、書籍を登録・共有し、レビューやお気に入りを通じて本の魅力を発見できる書籍レビューアプリです。ユーザーは書籍の登録・編集・削除、レビューの投稿・いいね、お気に入り登録ができ、ジャンルごとの分類やレビュー平均評価によるランキング表示に対応しています。また、書籍情報を外部から取得するための公開 API を備えています。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 主な機能
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- 会員登録・ログイン・ログアウト（Laravel Fortify による認証）
+- 書籍の一覧・詳細・登録・編集・削除（CRUD）
+- レビューの投稿・編集・削除・いいね
+- 書籍のお気に入り登録・解除
+- ジャンルの管理（CRUD）と、ジャンル別の書籍表示
+- レビュー平均評価によるランキング表示
+- 公開 API（書籍の一覧・詳細・登録・更新・削除）
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ER図
 
-## Learning Laravel
+```mermaid
+erDiagram
+    users ||--o{ books : "登録する"
+    users ||--o{ reviews : "投稿する"
+    users ||--o{ favorites : "お気に入り"
+    users ||--o{ review_likes : "いいね"
+    books ||--o{ reviews : "レビューされる"
+    books ||--o{ favorites : "お気に入りされる"
+    books ||--o{ book_genre : ""
+    genres ||--o{ book_genre : ""
+    reviews ||--o{ review_likes : "いいねされる"
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    users {
+        bigint id PK
+        string name
+        string email UK
+        string password
+        timestamps created_at_updated_at
+    }
+    genres {
+        bigint id PK
+        string name UK
+        timestamps created_at_updated_at
+    }
+    books {
+        bigint id PK
+        bigint user_id FK
+        string title
+        string author
+        string isbn UK
+        date published_date
+        text description "nullable"
+        string image_url "nullable"
+        timestamps created_at_updated_at
+    }
+    reviews {
+        bigint id PK
+        bigint user_id FK
+        bigint book_id FK
+        tinyint rating
+        text comment
+        timestamps created_at_updated_at
+    }
+    book_genre {
+        bigint id PK
+        bigint book_id FK
+        bigint genre_id FK
+        timestamps created_at_updated_at
+    }
+    favorites {
+        bigint id PK
+        bigint user_id FK
+        bigint book_id FK
+        timestamps created_at_updated_at
+    }
+    review_likes {
+        bigint id PK
+        bigint user_id FK
+        bigint review_id FK
+        timestamps created_at_updated_at
+    }
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 使用技術
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.x
+- Laravel 10
+- MySQL 8.0
+- Laravel Sail（Docker）
+- Laravel Fortify（認証）
+- Vite / Blade（フロントエンド）
+- PHPUnit（テスト）
+- Laravel Pint（コードフォーマット）
 
-## Laravel Sponsors
+## 環境構築手順
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+> Blade（`resources/` 配下）の入れ替え手順は、`coachtech-prepared-blade-list/Prepared-blade-mockcase-BookShelf` リポジトリの README を参照してください。
 
-### Premium Partners
+1. リポジトリをクローンする
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+git clone git@github.com:momo888-y/bookshelf-app.git
+cd bookshelf-app
+```
 
-## Contributing
+2. 環境変数ファイルを用意する
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+```
 
-## Code of Conduct
+3. Composer の依存関係をインストールする
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php83-composer:latest \
+    composer install --ignore-platform-reqs
+```
 
-## Security Vulnerabilities
+4. Sail を起動する
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+./vendor/bin/sail up -d
+```
 
-## License
+5. アプリケーションキーを生成する
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+6. マイグレーションとシーディングを実行する
+
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+
+7. フロントエンドの依存をインストールし、ビルドする
+
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+```
+
+## 開発環境URL
+
+- アプリケーション: http://localhost
+- phpMyAdmin: http://localhost:8080
+
+## APIエンドポイント一覧
+
+すべて認証不要の公開 API です。ベースパスは `/api/v1` です。
+
+| メソッド | パス | 概要 |
+| --- | --- | --- |
+| GET | `/api/v1/books` | 書籍一覧を取得（検索・絞り込み・ページネーション対応） |
+| GET | `/api/v1/books/{id}` | 書籍詳細を取得 |
+| POST | `/api/v1/books` | 書籍を登録 |
+| PUT | `/api/v1/books/{id}` | 書籍を更新 |
+| DELETE | `/api/v1/books/{id}` | 書籍を削除 |
+
+### 一覧取得のクエリパラメータ
+
+| パラメータ | 説明 |
+| --- | --- |
+| `keyword` | タイトル・著者の部分一致検索 |
+| `genre_id` | ジャンルによる絞り込み |
+| `per_page` | 1ページあたりの件数（デフォルト 20、最大 100） |
+| `page` | ページ番号 |
+
+## テスト
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+カバレッジ付きで実行する場合:
+
+```bash
+./vendor/bin/sail artisan test --coverage
+```
+
+## 作成者
+
+ももか
