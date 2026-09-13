@@ -81,18 +81,19 @@ erDiagram
 
 ## 使用技術
 
-- PHP 8.x
-- Laravel 10
-- MySQL 8.0
+- PHP 8.2
+- Laravel 10.x
+- MySQL 8.4
 - Laravel Sail（Docker）
 - Laravel Fortify（認証）
-- Vite / Blade（フロントエンド）
+- Vite / Tailwind CSS / Blade（フロントエンド）
 - PHPUnit（テスト）
 - Laravel Pint（コードフォーマット）
+- phpMyAdmin
 
 ## 環境構築手順
 
-> Blade（`resources/` 配下）の入れ替え手順は、`coachtech-prepared-blade-list/Prepared-blade-mockcase-BookShelf` リポジトリの README を参照してください。
+本アプリは Laravel Sail（Docker）で動作します。以下は本リポジトリをクローンした状態からの手順です。
 
 1. リポジトリをクローンする
 
@@ -101,21 +102,33 @@ git clone git@github.com:momo888-y/bookshelf-app.git
 cd bookshelf-app
 ```
 
-2. 環境変数ファイルを用意する
-
-```bash
-cp .env.example .env
-```
-
-3. Composer の依存関係をインストールする
+2. 依存パッケージをインストールする
 
 ```bash
 docker run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$(pwd):/var/www/html" \
     -w /var/www/html \
-    laravelsail/php83-composer:latest \
-    composer install --ignore-platform-reqs
+    -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
+    laravelsail/php82-composer:latest \
+    composer install
+```
+
+3. 環境変数ファイルを用意する
+
+```bash
+cp .env.example .env
+```
+
+`.env` のデータベース接続情報が以下になっていることを確認してください（`DB_HOST` はコンテナ名 `mysql` を指定します）。
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
 ```
 
 4. Sail を起動する
@@ -124,24 +137,33 @@ docker run --rm \
 ./vendor/bin/sail up -d
 ```
 
+> Apple Silicon（M1/M2/M3）で `no matching manifest for linux/arm64/v8` エラーが出る場合は、`compose.yaml` の mysql サービスに `platform: 'linux/amd64'` を追加してください。
+
 5. アプリケーションキーを生成する
 
 ```bash
 ./vendor/bin/sail artisan key:generate
 ```
 
-6. マイグレーションとシーディングを実行する
+6. フロントエンドの依存をインストールする
+
+```bash
+./vendor/bin/sail npm install
+```
+
+7. マイグレーションと初期データ投入を実行する
 
 ```bash
 ./vendor/bin/sail artisan migrate --seed
 ```
 
-7. フロントエンドの依存をインストールし、ビルドする
+8. Vite 開発サーバーを起動する
 
 ```bash
-./vendor/bin/sail npm install
 ./vendor/bin/sail npm run dev
 ```
+
+以上で http://localhost にアクセスするとアプリが表示されます。
 
 ## 開発環境URL
 
